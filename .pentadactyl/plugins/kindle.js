@@ -2,8 +2,8 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Fri 25 Mar 2011 10:52:58 PM CST
-// @Last Change: Mon 26 Mar 2012 11:01:53 PM CST
-// @Revision:    546
+// @Last Change: Mon 26 Mar 2012 11:23:03 PM CST
+// @Revision:    547
 // @Description:
 // @Usage:
 // @TODO:
@@ -353,7 +353,7 @@ var Kindle = function () {
     };
     var _center = function(elem) {
         var offsetWidth = elem.offsetWidth;
-        var  documentWidth = content.document.documentElement.clientWidth;
+        var documentWidth = content.document.documentElement.clientWidth;
         var left = (documentWidth - offsetWidth) / 2;
         elem.style.left = left + "px";
     };
