@@ -1,0 +1,521 @@
+// kindle.js -- reader
+// @Author:      eric.zou (frederick.zou@gmail.com)
+// @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
+// @Created:     Fri 25 Mar 2011 10:52:58 PM CST
+// @Last Change: Wed 14 Mar 2012 12:41:56 AM CST
+// @Revision:    481
+// @Description:
+// @Usage:
+// @TODO:
+// @CHANGES:
+
+// 不要直接改属性，加上新的css类，以后直接去掉css类就可以还原了。
+// 检查添加的是否为document.body，需要特殊处理
+// 从caret_hint查找如何定位界面元素
+// javascript利用xpath选择器
+// tr/td/li/dt/dd，这些不合法的标签合法化。
+// font-family
+// 记录 url,来判断是否失效.
+// 不适用于 xml 文件？
+
+let WARPPER = 'e37162';
+let WARPPER_INNER = 'd42809';
+let KINDLE_MODE = 'k';
+
+let STYLE_HIGHCONTRAST = '' + <><![CDATA[
+    #e37162 {
+        position: absolute;
+        width: 100%;
+        min-height: 100%;
+        /*background-color:#514F4E;*/
+        background-color:#68685C;
+        left: 0;
+        top: 0;
+        padding: 0;
+        opacity: 0.95;
+    }
+    #d42809 {
+        // background-color: #FFF;
+        background-color:#000000;
+        color: #FFFFFF;
+        top: 0;
+        margin: 0 auto;
+        padding: 40px;
+        width: 50%;
+        min-width: 600px;
+        text-align:left;
+        opacity: 1.0;
+        overflow: auto;
+    }
+    #d42809 * {
+        font-size:20px;
+        line-height:42px;
+        /*color:#5F4B32;*/
+        font-family: 'Microsoft Yahei',sans-serif !important;
+        text-align:justify;
+    }
+
+    #d42809 a {
+        text-decoration: none;
+        color: blue;
+    }
+
+    #d42809 h1 {
+        font-weight:bold;
+        font-size:150%;
+        text-align:center;
+    }
+
+    #d42809 li {
+        /* list-style:none; */
+    }
+
+    #d42809 #wrapper_title {
+        text-shadow: -1px 2px 3px;
+        display:none;
+        color:#333333;
+        font-family: Georgia,Palatino,Baskerville,'New Baskerville',serif;
+        font-size:24px;
+        letter-spacing: 5px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight:bolder;
+        // white-space: nowrap;
+        line-height: 32px;
+        margin-bottom:40px;
+    }
+
+    #d42809 p {
+        // text-indent:2em;
+    }
+]]></>;
+
+// I just took this from the firebug.
+// ~/Vcs/fbug-read-only/branches/firebug1.10/content/firebug/lib
+let CSS = {
+    getLocalName : function(element) {
+        return element.nodeName.toLowerCase(); // @TODO
+    },
+    getElementCSSSelector : function(element) {
+        if (!element || !element.localName)
+            return 'null';
+
+        var label = CSS.getLocalName(element);
+        if (element.id)
+            label += '#' + element.id;
+
+        if (element.classList && element.classList.length > 0)
+            label += '.' + element.classList.item(0);
+
+        return label;
+    },
+
+    getElementCSSPath : function(element) {
+        var paths = [];
+
+        for (; element && element.nodeType == 1; element = element.parentNode) {
+            var selector = CSS.getElementCSSSelector(element);
+            paths.splice(0, 0, selector);
+        }
+
+        return paths.length ? paths.join(' ') : null;
+    }
+};
+
+let RAW_STYLE = '' + <><![CDATA[
+        background-color:#FBF0D9;
+        top: 0;
+        margin: 0 auto;
+        padding: 40px;
+        width: 50%;
+        min-width: 600px;
+        text-align:left;
+        opacity: 1.0;
+        overflow: auto;
+]]></>;
+
+let STYLE = '' + <><![CDATA[
+    #e37162 {
+        position: absolute;
+        width: 100%;
+        min-height: 100%;
+        /*background-color:#514F4E;*/
+        background-color:#68685C;
+        left: 0;
+        top: 0;
+        padding: 0;
+        opacity: 0.95;
+    }
+    #d42809 {
+        // background-color: #FFF;
+        background-color:#FBF0D9;
+        top: 0;
+        margin: 0 auto;
+        padding: 40px;
+        width: 50%;
+        min-width: 600px;
+        text-align:left;
+        opacity: 1.0;
+        overflow: auto;
+    }
+    #d42809 * {
+        font-size:20px;
+        line-height:42px;
+        /*color:#5F4B32;*/
+        font-family: 'Microsoft Yahei',sans-serif !important;
+        text-align:justify;
+    }
+
+    #d42809 a {
+        text-decoration: none;
+        color: blue;
+    }
+
+    #d42809 h1 {
+        font-weight:bold;
+        font-size:150%;
+        text-align:center;
+    }
+
+    #d42809 li {
+        /* list-style:none; */
+    }
+
+    #d42809 #wrapper_title {
+        text-shadow: -1px 2px 3px;
+        display:none;
+        color:#333333;
+        font-family: Georgia,Palatino,Baskerville,'New Baskerville',serif;
+        font-size:24px;
+        letter-spacing: 5px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight:bolder;
+        // white-space: nowrap;
+        line-height: 32px;
+        margin-bottom:40px;
+    }
+
+    #d42809 p {
+        // text-indent:2em;
+    }
+]]></>;
+
+var Theme = {
+    default: STYLE,
+    highcontrast: STYLE_HIGHCONTRAST
+};
+
+var Kindle = function () {
+
+    var that = this;
+
+    var _walkTheDom = function walk(node, func) {
+        func(node);
+        node = node.firstChild;
+        while (node) {
+            walk(node, func);
+            node = node.nextSibling;
+        }
+    };
+
+    var _getMaxZIndex = function (elem) {
+        var max = 0;
+        _walkTheDom(elem, function (node) {
+            var actual = node.nodeType === 1
+            && content.window.getComputedStyle(node, null).getPropertyValue('z-index');
+            actual = (actual === '') ? 0 : parseFloat(actual);
+            if (actual > max) {
+                max = actual;
+            }
+        });
+        return max;
+    };
+
+    var _clean = function(node) {
+        if (node.nodeType == Node.COMMENT_NODE || node.nodeName == 'SCRIPT' || node.nodeName == 'STYLE' || node.nodeName == 'LINK' || node.nodeName == 'IFRAME') {
+            node.parentNode.removeChild(node);
+            return true;
+        }
+        ['id', 'class', 'style', 'highlight'].forEach(function(attr) {
+                try {
+                    node.removeAttribute(attr);
+                } catch (e) {
+                    ;
+                }
+        });
+    };
+    var lastElem = {};
+    that.showing = {};
+    that.kindle_wrapper = {};
+    var _tabID = function () {
+        return gBrowser.mCurrentTab.linkedPanel;
+    };
+    var _tidy = function (elem) {
+        var path = {
+            li: ['ol'],
+            td: ['tr', 'tbody', 'table'],
+            th: ['tr', 'tbody', 'table'],
+            tr: ['tbody', 'table'],
+            tbody: ['table'],
+            thead: ['table'],
+            tfoot: ['table'],
+            dt: ['dl'],
+            dd: ['dl']
+        };
+        var nodeName = elem.nodeName.toLowerCase();
+        var road = path[nodeName] || false;
+        var f = false;
+        if (road) {
+            road.forEach(function (name) {
+                if (f) {
+                    var i = content.document.createElement(name);
+                    i.appendChild(f);
+                    f = i;
+                } else {
+                    f = content.document.createElement(name);
+                    f.appendChild(elem);
+                }
+            });
+            return f;
+        }
+        return elem;
+    };
+    var _init = function (elem) {
+        lastElem[_tabID()] = {
+            elem: elem,
+            url: buffer.URL.spec
+        };
+        var k_elem = _tidy(elem.cloneNode(true));
+        _walkTheDom(k_elem, _clean);
+
+        var kindle_wrapper = content.document.createElement('div');
+        kindle_wrapper.setAttribute('id', WARPPER);
+        kindle_wrapper.style.zIndex =
+        _getMaxZIndex(content.document.body) + 1;
+        kindle_wrapper.style.top = content.window.scrollY + 'px';
+        kindle_wrapper.addEventListener('click', function (e) {
+                content.document.body.removeChild(e.currentTarget);
+                delete that.showing[_tabID()];
+            },
+            false
+        );
+
+        // document title
+        var wrapper_title = content.document.createElement('label');
+        wrapper_title.setAttribute('id', 'wrapper_title');
+        wrapper_title.innerHTML = content.document.title;
+
+        var kindle_wrapper_inner = content.document.createElement('div');
+        kindle_wrapper_inner.setAttribute('id', WARPPER_INNER);
+        kindle_wrapper_inner.style.minHeight = content.window.innerWidth + 'px';
+        kindle_wrapper_inner.addEventListener('click', function (e) {
+                e.stopPropagation();
+            },
+            false
+        );
+
+        that.style = content.document.createElement('style');
+        that.style.setAttribute('type', 'text/css');
+        that.style.setAttribute('charset', 'utf-8');
+        that.style.setAttribute('id', 'kindle-theme-style');
+        that.style.innerHTML = Theme[options['kindle-theme'] || options.get('kindle-theme').defaultValue];
+
+        that.extraStyle = content.document.createElement('style');
+        that.extraStyle.setAttribute('type', 'text/css');
+        that.extraStyle.setAttribute('charset', 'utf-8');
+        that.extraStyle.setAttribute('id', 'kindle-extra-style');
+        that.extraStyle.innerHTML = Theme[options['kindle-extra-style'] || options.get('kindle-extra-style').defaultValue];
+
+        kindle_wrapper.appendChild(that.style);
+        kindle_wrapper.appendChild(that.extraStyle);
+        kindle_wrapper_inner.appendChild(wrapper_title);
+        kindle_wrapper_inner.appendChild(k_elem);
+        kindle_wrapper.appendChild(kindle_wrapper_inner);
+        content.document.body.appendChild(kindle_wrapper);
+
+        that.showing[_tabID()] = true;
+        that.kindle_wrapper[_tabID()] = kindle_wrapper;
+    };
+
+    var _raw = function(elem) {
+        elem.setAttribute('origstyle', elem.getAttribute('style'));
+        elem.setAttribute('style', RAW_STYLE);
+
+        let visible_width = content.window.innerWidth;
+        let elem_width = elem.offsetWidth;
+
+    };
+
+    var _toggleraw = function() {
+        let elem = content.document.querySelector("[origstyle]");
+        if (elem) {
+            elem.setAttribute('style', elem.getAttribute('origstyle'));
+            elem.removeAttribute('origstyle');
+        } else {
+
+        }
+    };
+
+    var _filter = function (elem) {
+        if (that.showing[_tabID()] && _checkElem()) {
+            return false;
+        }
+        if (elem.nodeName === 'ARTICLE')
+            return true;
+        var text = elem.textContent.replace(/[\s\r\n\t]+/g, '');
+        return _mb_strlen(text) >= parseInt(options['kindle-length'], 10);
+    };
+
+    var _mb_strlen = function (str) {
+        var len = 0;
+        var length = str.length;
+        for(var i = 0; i < length; i++) {
+            len += str.charCodeAt(i) < 0 || str.charCodeAt(i) > 255 ? (/*charset == 'utf-8' ? 3 : 2*/3) : 1; // FIXME: character range
+        }
+        return len;
+    };
+
+    var _restore = function () {
+        if (that.showing[_tabID()] && _checkElem()) {
+            lastElem[_tabID()]['elem'].scrollIntoView();
+            content.document.body.removeChild(that.kindle_wrapper[_tabID()]);
+            delete that.showing[_tabID()];
+            delete that.kindle_wrapper[_tabID()];
+        } else {
+            if (typeof lastElem[_tabID()] !== 'undefined' && lastElem[_tabID()]['url'] == buffer.URL)
+                _init(lastElem[_tabID()]['elem']);
+            else
+                hints.show(KINDLE_MODE);
+        }
+    };
+
+    var _destory = function () {
+        content.document.body.removeChild(that.kindle_wrapper[_tabID()]);
+        delete that.kindle_wrapper[_tabID()];
+        lastElem[_tabID()]['elem'].scrollIntoView();
+        delete that.showing[_tabID()];
+    };
+
+    var _toggle = function () {
+        if (that.showing[_tabID()] && _checkElem()) {
+            _destory();
+        } else {
+            hints.show(KINDLE_MODE);
+        }
+    };
+
+    var _checkElem = function () {
+        if (content.document.getElementById(WARPPER))
+            return true;
+        return false;
+    };
+
+    var _free = function (aEvent) {
+        let aTab = aEvent.target;
+        delete that.showing[aTab.linkedPanel];
+        delete that.kindle_wrapper[aTab.linkedPanel];
+    };
+
+    var _dump = function () {
+        dump(that.showing.toSource());
+        ['\n','\n'].forEach(function (item) {dump(item);});
+    };
+
+    var _changeTheme = function(theme) {
+        try {
+            that.style.innerHTML = Theme[theme];
+        } catch (e) {}
+    };
+
+    var _appendStyle = function(css) {
+        try {
+            that.extraStyle.innerHTML = css;
+        } catch (e) {}
+    };
+
+    return {
+        init : _init,
+        restore: _restore,
+        filter: _filter,
+        toggle: _toggle,
+        free: _free,
+        dump: _dump,
+        MODENAME: KINDLE_MODE,
+        changeTheme: _changeTheme,
+        appendStyle: _appendStyle,
+        toggleraw: _toggleraw
+    };
+};
+let K = new Kindle();
+hints.addMode(K.MODENAME, 'Kindle Mode', function (elem) K.init(elem), K.filter, ['*']);
+
+group.mappings.add([modes.NORMAL],
+    ['<Leader>'+K.MODENAME],
+    'Reuse Previous Area',
+    K.restore
+);
+
+group.mappings.add([modes.NORMAL],
+    ['<Leader>r'],
+    'Don\'t minify the dom, just use the original source!',
+    K.toggleraw
+);
+
+group.mappings.add([modes.NORMAL],
+    ['<Leader>'+(K.MODENAME===K.MODENAME.toUpperCase() ? K.MODENAME.toLowerCase() : K.MODENAME.toUpperCase())],
+    'Toggle Kindle Mode',
+    K.toggle
+);
+
+group.options.add(['kindle-length', 'kinl'],
+    'Element\'s content length',
+    'number',
+    1000
+);
+
+group.options.add(['kindle-extra-style', 'kines'],
+    '额外的主题样式',
+    'string',
+    '',
+    {
+        setter: function(css) {
+            K.appendStyle(css);
+        }
+    }
+);
+
+group.options.add(['kindle-theme', 'kint'],
+    '配色主题',
+    'string',
+    'default',
+    {
+        completer: function (context) [
+            ['default', 'default scheme'],
+            ['highcontrast', 'high contrast scheme']
+        ],
+        setter: function(value) {
+            K.changeTheme(value);
+        }
+    }
+);
+
+gBrowser.tabContainer.addEventListener('TabClose', K.free, false);
+
+function onUnload() { // :rehash, exit firefox/current window, disable pentadactyl extension
+    gBrowser.tabContainer.removeEventListener('TabClose', K.free, false);
+}
+// iframe, frameset, use importNode, 然后将显示放到最上层浏览器窗口 iframe.parent
+// //*[name()!='A' and name()!='SPAN' and name()!='INPUT' and name()!='EM']
+// use bytes instead of length
+// 使用 scrollWidth 来判断显示全部内容所需要的宽度
+// http://dist.schmorp.de/rxvt-unicode/Changes
+// xml
+// 检测 html5 article 标签
+// 利用 html5 调色板来控制背景，前景色
+// vim: set et ts=4 sw=4:
+// checkout View->Zoom->Zoom text only.
+// 背景用普通的 layer 实现，
+// <div id="layer" style="width:100%;height:100%;z-index:1;"></div>
+// <div id="content" style="z-index:2;"></div>
+// zoom text only (not) ，自动把页面放大，不只是放大字体。
