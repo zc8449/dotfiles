@@ -2,14 +2,13 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Fri 25 Mar 2011 10:52:58 PM CST
-// @Last Change: Wed 14 Mar 2012 12:41:56 AM CST
-// @Revision:    481
+// @Last Change: Mon 26 Mar 2012 11:01:53 PM CST
+// @Revision:    546
 // @Description:
 // @Usage:
 // @TODO:
 // @CHANGES:
 
-// 不要直接改属性，加上新的css类，以后直接去掉css类就可以还原了。
 // 检查添加的是否为document.body，需要特殊处理
 // 从caret_hint查找如何定位界面元素
 // javascript利用xpath选择器
@@ -18,15 +17,16 @@
 // 记录 url,来判断是否失效.
 // 不适用于 xml 文件？
 
-let WARPPER = 'e37162';
-let WARPPER_INNER = 'd42809';
+let CANVAS_ID = 'e37162';
+let ARTICLE_ID = 'd42809';
 let KINDLE_MODE = 'k';
+let KINDLE_MODENAME = '你不可能输入这个';
 
 let STYLE_HIGHCONTRAST = '' + <><![CDATA[
     #e37162 {
-        position: absolute;
+        position: fixed;
         width: 100%;
-        min-height: 100%;
+        height: 100%;
         /*background-color:#514F4E;*/
         background-color:#68685C;
         left: 0;
@@ -35,6 +35,7 @@ let STYLE_HIGHCONTRAST = '' + <><![CDATA[
         opacity: 0.95;
     }
     #d42809 {
+        position: absolute;
         // background-color: #FFF;
         background-color:#000000;
         color: #FFFFFF;
@@ -46,6 +47,7 @@ let STYLE_HIGHCONTRAST = '' + <><![CDATA[
         text-align:left;
         opacity: 1.0;
         overflow: auto;
+        min-height: 100%;
     }
     #d42809 * {
         font-size:20px;
@@ -70,7 +72,7 @@ let STYLE_HIGHCONTRAST = '' + <><![CDATA[
         /* list-style:none; */
     }
 
-    #d42809 #wrapper_title {
+    #d42809 #d42809_title {
         text-shadow: -1px 2px 3px;
         display:none;
         color:#333333;
@@ -136,9 +138,9 @@ let RAW_STYLE = '' + <><![CDATA[
 
 let STYLE = '' + <><![CDATA[
     #e37162 {
-        position: absolute;
+        position: fixed;
         width: 100%;
-        min-height: 100%;
+        height: 100%;
         /*background-color:#514F4E;*/
         background-color:#68685C;
         left: 0;
@@ -147,6 +149,7 @@ let STYLE = '' + <><![CDATA[
         opacity: 0.95;
     }
     #d42809 {
+        position: absolute;
         // background-color: #FFF;
         background-color:#FBF0D9;
         top: 0;
@@ -157,6 +160,7 @@ let STYLE = '' + <><![CDATA[
         text-align:left;
         opacity: 1.0;
         overflow: auto;
+        min-height: 100%;
     }
     #d42809 * {
         font-size:20px;
@@ -181,7 +185,7 @@ let STYLE = '' + <><![CDATA[
         /* list-style:none; */
     }
 
-    #d42809 #wrapper_title {
+    #d42809 #d42809_title {
         text-shadow: -1px 2px 3px;
         display:none;
         color:#333333;
@@ -248,7 +252,7 @@ var Kindle = function () {
     var lastElem = {};
     that.showing = {};
     that.kindle_wrapper = {};
-    var _tabID = function () {
+    var getCurrentPanelID = function () {
         return gBrowser.mCurrentTab.linkedPanel;
     };
     var _tidy = function (elem) {
@@ -282,60 +286,76 @@ var Kindle = function () {
         return elem;
     };
     var _init = function (elem) {
-        lastElem[_tabID()] = {
+        let cPI = getCurrentPanelID();
+        lastElem[cPI] = {
             elem: elem,
             url: buffer.URL.spec
         };
         var k_elem = _tidy(elem.cloneNode(true));
         _walkTheDom(k_elem, _clean);
 
-        var kindle_wrapper = content.document.createElement('div');
-        kindle_wrapper.setAttribute('id', WARPPER);
-        kindle_wrapper.style.zIndex =
-        _getMaxZIndex(content.document.body) + 1;
-        kindle_wrapper.style.top = content.window.scrollY + 'px';
-        kindle_wrapper.addEventListener('click', function (e) {
-                content.document.body.removeChild(e.currentTarget);
-                delete that.showing[_tabID()];
-            },
-            false
-        );
+        var maxZIndex = _getMaxZIndex(content.document.body);
+
+        var canvas = content.document.getElementById(CANVAS_ID);
+        if (!canvas) {
+            canvas = content.document.createElement('div');
+            canvas.setAttribute('id', CANVAS_ID);
+            canvas.style.zIndex = ++maxZIndex;
+            canvas.addEventListener('click', function (e) {
+                    content.document.body.removeChild(e.currentTarget);
+                    delete that.showing[cPI];
+                },
+                false
+            );
+            that.style = content.document.createElement('style');
+            that.style.setAttribute('type', 'text/css');
+            that.style.setAttribute('charset', 'utf-8');
+            that.style.setAttribute('id', 'kindle-theme-style');
+            that.style.innerHTML = Theme[options['kindle-theme'] || options.get('kindle-theme').defaultValue];
+            canvas.appendChild(that.style);
+
+            let extraStyleRule = Theme[options['kindle-extra-style'] || options.get('kindle-extra-style').defaultValue] || "";
+            if (extraStyleRule.trim().length > 0) {
+                that.extraStyle = content.document.createElement('style');
+                that.extraStyle.setAttribute('type', 'text/css');
+                that.extraStyle.setAttribute('charset', 'utf-8');
+                that.extraStyle.setAttribute('id', 'kindle-extra-style');
+                that.extraStyle.innerHTML = 
+                canvas.appendChild(that.extraStyle);
+            }
+
+            content.document.body.appendChild(canvas);
+        }
+        canvas.style.display = "block";
 
         // document title
-        var wrapper_title = content.document.createElement('label');
-        wrapper_title.setAttribute('id', 'wrapper_title');
-        wrapper_title.innerHTML = content.document.title;
+        var article_title = content.document.createElement('label');
+        article_title.setAttribute('id', ARTICLE_ID + '_title');
+        article_title.innerHTML = content.document.title;
 
-        var kindle_wrapper_inner = content.document.createElement('div');
-        kindle_wrapper_inner.setAttribute('id', WARPPER_INNER);
-        kindle_wrapper_inner.style.minHeight = content.window.innerWidth + 'px';
-        kindle_wrapper_inner.addEventListener('click', function (e) {
+        var article = content.document.createElement('div');
+        article.setAttribute('id', ARTICLE_ID);
+        article.style.zIndex = ++maxZIndex;
+        article.addEventListener('click', function (e) {
                 e.stopPropagation();
             },
             false
         );
 
-        that.style = content.document.createElement('style');
-        that.style.setAttribute('type', 'text/css');
-        that.style.setAttribute('charset', 'utf-8');
-        that.style.setAttribute('id', 'kindle-theme-style');
-        that.style.innerHTML = Theme[options['kindle-theme'] || options.get('kindle-theme').defaultValue];
+        article.appendChild(article_title);
+        article.appendChild(k_elem);
+        content.document.body.appendChild(article);
+        article.scrollIntoView(true);
+        _center(article);
 
-        that.extraStyle = content.document.createElement('style');
-        that.extraStyle.setAttribute('type', 'text/css');
-        that.extraStyle.setAttribute('charset', 'utf-8');
-        that.extraStyle.setAttribute('id', 'kindle-extra-style');
-        that.extraStyle.innerHTML = Theme[options['kindle-extra-style'] || options.get('kindle-extra-style').defaultValue];
-
-        kindle_wrapper.appendChild(that.style);
-        kindle_wrapper.appendChild(that.extraStyle);
-        kindle_wrapper_inner.appendChild(wrapper_title);
-        kindle_wrapper_inner.appendChild(k_elem);
-        kindle_wrapper.appendChild(kindle_wrapper_inner);
-        content.document.body.appendChild(kindle_wrapper);
-
-        that.showing[_tabID()] = true;
-        that.kindle_wrapper[_tabID()] = kindle_wrapper;
+        that.showing[cPI] = true;
+        that.kindle_wrapper[cPI] = article;
+    };
+    var _center = function(elem) {
+        var offsetWidth = elem.offsetWidth;
+        var  documentWidth = content.document.documentElement.clientWidth;
+        var left = (documentWidth - offsetWidth) / 2;
+        elem.style.left = left + "px";
     };
 
     var _raw = function(elem) {
@@ -358,7 +378,8 @@ var Kindle = function () {
     };
 
     var _filter = function (elem) {
-        if (that.showing[_tabID()] && _checkElem()) {
+        let cPI = getCurrentPanelID();
+        if (that.showing[cPI] && _checkElem()) {
             return false;
         }
         if (elem.nodeName === 'ARTICLE')
@@ -377,36 +398,47 @@ var Kindle = function () {
     };
 
     var _restore = function () {
-        if (that.showing[_tabID()] && _checkElem()) {
-            lastElem[_tabID()]['elem'].scrollIntoView();
-            content.document.body.removeChild(that.kindle_wrapper[_tabID()]);
-            delete that.showing[_tabID()];
-            delete that.kindle_wrapper[_tabID()];
+        let cPI = getCurrentPanelID();
+        if (that.showing[cPI] && _checkElem()) {
+            lastElem[cPI]['elem'].scrollIntoView(true);
+            content.document.body.removeChild(that.kindle_wrapper[cPI]);
+            var canvas = content.document.getElementById(CANVAS_ID);
+            if (canvas) {
+                canvas.style.display = "none";
+            }
+            delete that.showing[cPI];
+            delete that.kindle_wrapper[cPI];
         } else {
-            if (typeof lastElem[_tabID()] !== 'undefined' && lastElem[_tabID()]['url'] == buffer.URL)
-                _init(lastElem[_tabID()]['elem']);
+            if (typeof lastElem[cPI] !== 'undefined' && lastElem[cPI]['url'] == buffer.URL)
+                _init(lastElem[cPI]['elem']);
             else
-                hints.show(KINDLE_MODE);
+                hints.show(KINDLE_MODENAME);
         }
     };
 
     var _destory = function () {
-        content.document.body.removeChild(that.kindle_wrapper[_tabID()]);
-        delete that.kindle_wrapper[_tabID()];
-        lastElem[_tabID()]['elem'].scrollIntoView();
-        delete that.showing[_tabID()];
+        let cPI = getCurrentPanelID();
+        content.document.body.removeChild(that.kindle_wrapper[cPI]);
+        var canvas = content.document.getElementById(CANVAS_ID);
+        if (canvas) {
+            canvas.style.display = "none";
+        }
+        delete that.kindle_wrapper[cPI];
+        lastElem[cPI]['elem'].scrollIntoView(true);
+        delete that.showing[cPI];
     };
 
     var _toggle = function () {
-        if (that.showing[_tabID()] && _checkElem()) {
+        let cPI = getCurrentPanelID();
+        if (that.showing[cPI] && _checkElem()) {
             _destory();
         } else {
-            hints.show(KINDLE_MODE);
+            hints.show(KINDLE_MODENAME);
         }
     };
 
     var _checkElem = function () {
-        if (content.document.getElementById(WARPPER))
+        if (content.document.getElementById(ARTICLE_ID))
             return true;
         return false;
     };
@@ -448,7 +480,7 @@ var Kindle = function () {
     };
 };
 let K = new Kindle();
-hints.addMode(K.MODENAME, 'Kindle Mode', function (elem) K.init(elem), K.filter, ['*']);
+hints.addMode(KINDLE_MODENAME, 'Kindle Mode', function (elem) K.init(elem), K.filter, ['*']);
 
 group.mappings.add([modes.NORMAL],
     ['<Leader>'+K.MODENAME],
@@ -519,3 +551,4 @@ function onUnload() { // :rehash, exit firefox/current window, disable pentadact
 // <div id="layer" style="width:100%;height:100%;z-index:1;"></div>
 // <div id="content" style="z-index:2;"></div>
 // zoom text only (not) ，自动把页面放大，不只是放大字体。
+// vim: set et ts=4 sw=4:
