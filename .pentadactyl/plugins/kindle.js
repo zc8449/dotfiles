@@ -2,8 +2,8 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Fri 25 Mar 2011 10:52:58 PM CST
-// @Last Change: Thu 29 Mar 2012 11:32:45 PM CST
-// @Revision:    554
+// @Last Change: Thu 29 Mar 2012 11:35:06 PM CST
+// @Revision:    555
 // @Description:
 // @Usage:
 // @TODO:
@@ -304,7 +304,7 @@ var Kindle = function () {
             canvas.setAttribute('id', CANVAS_ID);
             canvas.style.zIndex = ++maxZIndex;
             canvas.addEventListener('click', function (e) {
-                    content.document.body.removeChild(e.currentTarget);
+                    canvas.style.display = "none";
                     content.document.body.removeChild(that.kindle_wrapper[cPI]);
                     delete that.showing[cPI];
                     delete that.kindle_wrapper[cPI];
