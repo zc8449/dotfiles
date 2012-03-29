@@ -2,8 +2,8 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Fri 25 Mar 2011 10:52:58 PM CST
-// @Last Change: Mon 26 Mar 2012 11:23:03 PM CST
-// @Revision:    547
+// @Last Change: Tue 27 Mar 2012 01:05:08 AM CST
+// @Revision:    553
 // @Description:
 // @Usage:
 // @TODO:
@@ -35,6 +35,7 @@ let STYLE_HIGHCONTRAST = '' + <><![CDATA[
         opacity: 0.95;
     }
     #d42809 {
+        box-shadow: 0 0 1em #CCC;
         position: absolute;
         // background-color: #FFF;
         background-color:#000000;
@@ -149,6 +150,7 @@ let STYLE = '' + <><![CDATA[
         opacity: 0.95;
     }
     #d42809 {
+        box-shadow: 0 0 1em #CCC;
         position: absolute;
         // background-color: #FFF;
         background-color:#FBF0D9;
@@ -411,8 +413,9 @@ var Kindle = function () {
         } else {
             if (typeof lastElem[cPI] !== 'undefined' && lastElem[cPI]['url'] == buffer.URL)
                 _init(lastElem[cPI]['elem']);
-            else
+            else {
                 hints.show(KINDLE_MODENAME);
+            }
         }
     };
 
