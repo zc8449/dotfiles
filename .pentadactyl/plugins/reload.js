@@ -2,8 +2,8 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Wed 28 Mar 2012 12:25:52 AM CST
-// @Last Change: Wed 28 Mar 2012 10:59:02 PM CST
-// @Revision:    120
+// @Last Change: Thu 29 Mar 2012 11:41:13 PM CST
+// @Revision:    121
 // @Description:
 // @Usage:
 // @TODO:
@@ -15,7 +15,6 @@ if (window.timertimer)
 let exec = function() {
     let doc = gBrowser.mCurrentBrowser.contentDocument;
     let loc = doc.location;
-    let protocol = loc.protocol;
     let lastModified = doc.lastModified;
     let timestamp = new Date(lastModified).getTime();
 
