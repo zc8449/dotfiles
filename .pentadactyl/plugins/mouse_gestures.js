@@ -312,7 +312,7 @@ group.commands.add(["mouseg[estures]", "mg"],
   "Reload Mouse Gestures",
   function (args) {
     if (args.bang) { // 强制重载
-      return dactyl.execute("runtime plugins/_mouse_gestures.js");
+      return ex.runtime("plugins/_mouse_gestures.js");
     }
 
     if (args.length == 0)

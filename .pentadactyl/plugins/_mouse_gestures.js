@@ -45,7 +45,7 @@ userContext.MGLIST = [
 ['', 'Go to Parent Directory', 'gu', true],
  */
 
-// Please don't modify lines below
+// Please don't modify the code below
 // 请不要修改下面的代码
 if (commands.get("mousegestures"))
-	dactyl.execute("mousegestures reload");
+	ex.mousegestures("reload");
