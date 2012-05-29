@@ -7,6 +7,7 @@ hg 版本：6772
 
 配置文件路径：（Windows 下）
 C:/firefox/_pentadactylrc
-c:/firefox/pentadactyl
+
+C:/firefox/pentadactyl
 
 linux 下类似
