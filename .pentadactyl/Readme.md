@@ -1,5 +1,5 @@
 pentadactyl-1.0rc2pre.xpi
-hg 版本：6772
+hg 版本：6773
 
 
 
@@ -12,3 +12,10 @@ C:/firefox/_pentadactylrc
 C:/firefox/pentadactyl
 
 linux 下类似
+
+FAQ
+
+1. 能将 pentadactyl 的配置信息放到 profile 目录中去吗？
+
+
+可以的，将 xpi 文件中的 chrome/common/modules/io.jsm 和 chrome/common/content/dactyl.js 中的 CurProcD 换成 ProfD 就可以了。
