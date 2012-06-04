@@ -2,6 +2,8 @@ pentadactyl-1.0rc2pre.xpi 绿色便携版本
 hg 版本：6773
 
 
+http://g.mozest.com/viewthread.php?tid=41606
+
 
 比如 firefox 安装在 C:/firefox
 
