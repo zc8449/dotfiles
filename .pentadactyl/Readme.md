@@ -1,5 +1,5 @@
 pentadactyl-1.0rc2pre.xpi 绿色便携版本
-hg 版本：6773
+hg 版本：6774
 
 
 http://g.mozest.com/viewthread.php?tid=41606
