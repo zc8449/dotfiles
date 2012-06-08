@@ -27,21 +27,25 @@ group.commands.add(['netease', '自己改一个简单的命令吧！'],
         xhr.setRequestHeader('Content-Type',
             'application/x-www-form-urlencoded');
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onreadystatechange = function(evt) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    let data = JSON.parse(xhr.responseText);
+        xhr.onload = function(evt) {
+            if (xhr.status === 200) {
+                let data = JSON.parse(xhr.responseText);
+                if (data.result) {
                     let urls = data.shortUrls;
                     let str = '';
                     urls.forEach(function(item) {
-                        str += item.url + '\n';
-                        dactyl.echo(item.url);
+                            str += item.url + '\n';
+                            dactyl.echo(item.url);
                     });
                     dactyl.clipboardWrite(str);
+                } else {
+                    dactyl.echoerr('无返回短网址！');
                 }
+            } else {
+                dactyl.echoerr('获取短网址失败！返回状态代码：' + xhr.status);
             }
         };
-        xhr.send('json=' + JSON.stringify(send));
+        xhr.send('json=' + encodeURIComponent(JSON.stringify(send)));
     },
     {
         argCount: '?',
