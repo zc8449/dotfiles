@@ -1,4 +1,4 @@
-// 126/网易短网址缩短服务，并将结果同时复制到剪贴板。
+// 126/网易短网址缩短服务，同时将结果复制到剪贴板。
 // http://126.am/
 //
 // 用法
@@ -11,7 +11,7 @@
 // :netease baidu.com
 // http://126.am/JtUf71
 //
-group.commands.add(['netease', '自己改一个简单的命令吧！'],
+group.commands.add(['netease', 'nete'],
     '126/网易短网址服务',
     function(args) {
         let url = args[0] || buffer.URL;
