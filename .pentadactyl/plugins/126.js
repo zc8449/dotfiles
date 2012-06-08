@@ -39,7 +39,7 @@ group.commands.add(['netease', '自己改一个简单的命令吧！'],
                     });
                     dactyl.clipboardWrite(str);
                 } else {
-                    dactyl.echoerr('无返回短网址！');
+                    dactyl.echoerr('未返回任何短网址！');
                 }
             } else {
                 dactyl.echoerr('获取短网址失败！返回状态代码：' + xhr.status);
