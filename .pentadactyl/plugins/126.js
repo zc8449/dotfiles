@@ -11,7 +11,7 @@
 // :netease baidu.com
 // http://126.am/JtUf71
 //
-group.commands.add(['netease', 'nete'],
+group.commands.add(['net[ease]'],
     '126/网易短网址服务',
     function(args) {
         let url = args[0] || buffer.URL;

@@ -226,7 +226,7 @@ group.options.add(["repeat-interval", "repint"], // TODO 提示不要设置得�
 	}
 );
 
-group.commands.add(["rep[eat]", "rep"],
+group.commands.add(["rep[eat]"],
 	"Repeat actions!",
 	repeat.init,
 	{

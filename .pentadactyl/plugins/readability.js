@@ -995,7 +995,7 @@ const BOOKMARKLET_READ = "javascript:((function(){window.baseUrl='https://www.re
 
 const BOOKMARKLET_SEND = "javascript:((function(){window.baseUrl='https://www.readability.com';window.readabilityToken='';var s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('charset','UTF-8');s.setAttribute('src',baseUrl+'/bookmarklet/send-to-kindle.js');document.documentElement.appendChild(s);})())";
 
-group.commands.add(["rea[dability]", "rea"],
+group.commands.add(["rea[dability]"],
 	"Read Comfortably—Anytime, Anywhere",
 	function (args) {
 		let addon = true;
