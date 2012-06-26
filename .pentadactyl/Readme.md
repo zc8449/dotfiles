@@ -1,13 +1,12 @@
-pentadactyl-1.0rc2pre.xpi 绿色便携版本
+pentadactyl 绿色便携版本
+
 hg 版本：6780
 
+pentadactyl-1.0rc2pre.xpi: 配置文件在 firefox.exe 可执行程序所在的目录
 
-http://g.mozest.com/viewthread.php?tid=41606
+比如 firefox.exe 在 C:/firefox/
 
-
-比如 firefox 安装在 C:/firefox
-
-配置文件路径：（Windows 下）
+则配置文件路径如下（在 Windows 下）：
 
 C:/firefox/_pentadactylrc
 
@@ -15,9 +14,9 @@ C:/firefox/pentadactyl
 
 linux 下类似
 
-FAQ
 
-1. 能将 pentadactyl 的配置信息放到 profile 目录中去吗？
+pentadactyl-1.0rc2pre_profile.xpi: 配置文件放置在当前的 profile 目录下
 
 
-可以的，将 xpi 文件中的 chrome/common/modules/io.jsm 和 chrome/common/content/dactyl.js 中的 CurProcD 换成 ProfD 就可以了。
+http://g.mozest.com/viewthread.php?tid=41606
+
