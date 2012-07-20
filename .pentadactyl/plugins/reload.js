@@ -2,7 +2,7 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Wed 28 Mar 2012 12:25:52 AM CST
-// @Last Change: Thu 29 Mar 2012 11:41:13 PM CST
+// @Last Change: Fri 20 Jul 2012 11:09:03 PM CST
 // @Revision:    121
 // @Description:
 // @Usage:
@@ -27,7 +27,7 @@ let exec = function() {
 let isNewer = function(path, timestamp) {
         let file = io.File(path);
         // lastModifiedTimeOfLink lastModifiedTime
-        if (file.exists() && file.isFile() &&
+        if (file.exists() &&
             (timestamp < file.lastModifiedTime))
             return true;
         return false;
@@ -44,18 +44,19 @@ let checkLocation = function(location, timestamp) {
 // check
 let check = function(collection, attr) {
     return function(doc, timestamp) {
-        return Array.some(doc[collection], function(script) {
-            let src = script[attr];
+        return Array.some(doc[collection], function(item) {
+            let src = item[attr];
             if (src.length == 0)
                 return false;
             let uri = util.newURI(src);
             if (uri.scheme === 'file') {
-                if (typeof script.lastModifiedTime === 'undefined') {
+                if (typeof item.lastModifiedTime === 'undefined') {
                     let file = io.File(uri.filePath);
-                    script.lastModifiedTime = file.lastModifiedTime;
+                    if (file.exists())
+                        item.lastModifiedTime = file.lastModifiedTime;
                     return false;
                 }
-                return isNewer(uri.filePath, script.lastModifiedTime);
+                return isNewer(uri.filePath, item.lastModifiedTime);
             }
             return false;
         });
@@ -73,6 +74,7 @@ function onUnload() {
 
 // 添加右键菜单，有指定动作
 // inotify
-// vim: set et ts=4 sw=4:
 // 检测 svg images scripts stylesheets
+// symbolic links???
 // 检测非正常页面，比如下载页面，扩展管理页面
+// vim: set et ts=4 sw=4:
