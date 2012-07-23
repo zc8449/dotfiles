@@ -2,6 +2,8 @@ pentadactyl 绿色便携版本
 
 hg 版本：6784
 
+pentadactyl-1.0.xpi: pentadactyl 1.0 正式版
+
 pentadactyl-1.0rc2pre.xpi: 配置文件在 firefox.exe 可执行程序所在的目录
 
 比如 firefox.exe 在 C:/firefox/
