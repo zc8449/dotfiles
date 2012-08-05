@@ -29,13 +29,12 @@ if (should()) {
         Array.slice(inputs).forEach(function(input) {
             input.addEventListener('focus', function(evt) {
                 if (post_insert) {
-                    status = parseInt(io.system('python ' + py_path).output);
-                    if (status == 2)
-                        io.system('python ' + py_path + ' c');
+                    io.system(['python', py_path], null, function(result) {
+                        status = parseInt(result.output);
+                    });
                     post_insert = false;
-                } else {
-                    io.system('python ' + py_path + ' c');
                 }
+                io.system(['python', py_path, 'c']);
             });
         });
 
@@ -49,7 +48,7 @@ if (should()) {
             post_insert = true;
             window.setTimeout(function() {
                 if (status == 2)
-                    io.system('python ' + py_path + ' o');
+                    io.system(['python', py_path, 'o']);
             }, timeout);
             break;
 
