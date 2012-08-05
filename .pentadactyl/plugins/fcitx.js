@@ -1,5 +1,7 @@
 // @HACK: dactyl.timeout
 // :help modes
+// rewritten, use ctype
+// long time delay
 
 function should() {
     if (!config.OS.isUnix)
@@ -17,32 +19,35 @@ if (should()) {
     let path = plugins.fcitx.PATH;
     let py_path = path.slice(0, path.length - 2) + 'py';
     let status = 0;
-    let timeout = 40;
+    let post_insert = false;
+    let timeout = 10;
+
+    dactyl.registerObserver('enter', function() {
+        let query = ['#dactyl-statusline-field-commandline-command',
+            '#dactyl-commandline-command'].join(',');
+        let inputs = document.querySelectorAll(query);
+        Array.slice(inputs).forEach(function(input) {
+            input.addEventListener('focus', function(evt) {
+                if (post_insert) {
+                    status = parseInt(io.system('python ' + py_path).output);
+                    if (status == 2)
+                        io.system('python ' + py_path + ' c');
+                    post_insert = false;
+                } else {
+                    io.system('python ' + py_path + ' c');
+                }
+            });
+        });
+
+    });
 
     dactyl.registerObserver('modes.change', function() {
         let mode_name = modes.mainMode.name;
         switch (mode_name) {
-            case 'COMMAND_LINE' :
-            case 'FILE_INPUT' :
-            case 'FIND' :
-            case 'FIND_BACKWARD' :
-            case 'FIND_FORWARD' :
-            case 'HINTS' :
-            case 'PROMPT' :
-            case 'REPL' :
-            case 'INPUT_MULTILINE' :
-            case 'MENU' :
-            case 'EX' :
-            dactyl.timeout(function() {
-                status = parseInt(io.system('python ' + py_path).output);
-                if (status == 2)
-                    io.system('python ' + py_path + ' c');
-            }, timeout);
-            break;
-
             case 'INSERT' :
             case 'AUTOCOMPLETE' :
-            dactyl.timeout(function() {
+            post_insert = true;
+            window.setTimeout(function() {
                 if (status == 2)
                     io.system('python ' + py_path + ' o');
             }, timeout);
