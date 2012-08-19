@@ -1,12 +1,8 @@
- <nowiki>
-./manage.py shell
-</nowiki>
+ ./manage.py shell
 
 在用上面的命令来进入 django project 交互式 shell时，在 ipython 存在的情况下，默认会调用 ipython，但无法用别的 client 与之交互。
 
- <nowiki>
-./manage.py shell_console
-</nowiki>
+ ./manage.py shell_console
 
 默认启动 ipython console，而不是纯 ipython
 
