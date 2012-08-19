@@ -1,6 +1,6 @@
 wikitext to xhtml converter
 
-== Requires ==
+== Requirements ==
 
 You need mwlib, mwlib.xhtml
 
