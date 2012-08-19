@@ -1,0 +1,19 @@
+wikitext to xhtml converter
+
+== Requires ==
+
+You need mwlib, mwlib.xhtml
+
+== Install 3rd party libs ==
+
+We use pip to install 3rd party libs, on your system, pip-python may be referenced to pip.
+
+ pip-python install mwlib mwlib.xhtml
+
+== Usage ==
+
+Take a file named "filename.mediawiki" for example:
+
+ python wikitext2xhtml.py filename.mediawiki
+
+After you've done, it'll create filename.xhtml in your current directory.
