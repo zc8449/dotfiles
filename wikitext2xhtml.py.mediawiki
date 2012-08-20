@@ -17,3 +17,7 @@ Take a file named "filename.mediawiki" for example:
  python wikitext2xhtml.py filename.mediawiki
 
 After you've done, it'll create filename.xhtml in your current directory.
+
+== TODO ==
+
+* Remove broken stylesheets.
