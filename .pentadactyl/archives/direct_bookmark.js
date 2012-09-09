@@ -215,15 +215,15 @@ Deferred.prototype = {
 
 Deferred.next = function (fun) {
     var d = new Deferred();
-    var id = setTimeout(function () { clearTimeout(id); d.call() }, 0);
+    var id = window.setTimeout(function () { window.clearTimeout(id); d.call() }, 0);
     if (fun) d.callback.ok = fun;
-    d.canceller = function () { try { clearTimeout(id) } catch (e) {} };
+    d.canceller = function () { try { window.clearTimeout(id) } catch (e) {} };
     return d;
 };
 
 function http (opts) {
     var d = Deferred();
-    var req = new XMLHttpRequest();
+    var req = new window.XMLHttpRequest();
     req.open(opts.method, opts.url, true, opts.user || null, opts.password || null);
     if (opts.headers) {
         for (var k in opts.headers) if (opts.headers.hasOwnProperty(k)) {
@@ -425,7 +425,7 @@ var services =
                 });
             },
             tags:function(user,password){
-                var xhr = new XMLHttpRequest();
+                var xhr = new window.XMLHttpRequest();
                 var hatena_tags = [];
 
                 // http://b.hatena.ne.jp/retlet/20110322#bookmark-34906937
@@ -466,7 +466,7 @@ var services =
             tags:function(user,password){
                 const feed_url = 'http://feeds.delicious.com/feeds/json/tags/';
                 var returnValue = [];
-                var xhr = new XMLHttpRequest();
+                var xhr = new window.XMLHttpRequest();
                 xhr.open("GET", feed_url + user + "?raw", false, user, password);
                 xhr.send(null);
 
@@ -517,7 +517,7 @@ var services =
                 });
             },
             tags:function(user,password){
-                var xhr = new XMLHttpRequest();
+                var xhr = new window.XMLHttpRequest();
                 var ldc_tags = [];
 
                 xhr.open("GET","http://clip.livedoor.com/clip/add?link=http://example.example/",false);
@@ -558,7 +558,7 @@ var services =
                 },
                 tags:function(user,password){
                     var returnValue = [];
-                    var xhr = new XMLHttpRequest();
+                    var xhr = new window.XMLHttpRequest();
                     xhr.open("GET", "https://www.google.com/bookmarks", false, user, password);
                     xhr.send(null);
 
@@ -595,7 +595,7 @@ var services =
                 tags:function(user,password){
                     const feed_url = 'https://secure.faves.com/v1/tags/get';
                     var returnValue = [];
-                    var xhr = new XMLHttpRequest();
+                    var xhr = new window.XMLHttpRequest();
                     xhr.open("GET", feed_url, false, user, password);
                     xhr.send(null);
 
@@ -658,7 +658,7 @@ function getTags(arg){
 group.commands.add(['btags'],
     "Update Social Bookmark Tags",
     function (arg) {
-        setTimeout(function(){getTagsAsync().call([])},0)
+        window.setTimeout(function(){getTagsAsync().call([])},0)
     },
     {},
     true
@@ -758,7 +758,7 @@ group.commands.add(['sbm'],"Post to Social Bookmark",
             });
         }
         d.error(function(e){dactyl.echoerr("direct_bookmark.js: Exception throwed! " + e);dactyl.log(e);});
-        setTimeout(function(){first.call();},0);
+        window.setTimeout(function(){first.call();},0);
     },
     {
         completer: function(context, arg){

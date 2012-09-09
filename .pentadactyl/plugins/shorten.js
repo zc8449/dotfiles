@@ -46,7 +46,7 @@ var bitly = function (url, callback) {
 		return dactyl.echoerr("Your bitly api key doesn't exists!.");
 	if (!(/^https?:\/\//.test(url)))
 		url = encodeURIComponent("http://" + url); // TODO: check
-	var req = new XMLHttpRequest();
+	var req = new window.XMLHttpRequest();
 	var querystring = "login="+options["shorten-user-bitly"]+"&apiKey="+options["shorten-key-bitly"]+"&format=txt&longUrl="+url;
 	req.open("GET",
 		"http://api.bit.ly/v3/shorten?" + querystring,
@@ -74,7 +74,7 @@ var google = function (url, callback) {
 	 * Google URL Shortener API
 	 * http://code.google.com/apis/urlshortener/index.html
 	 */
-	var req = new XMLHttpRequest();
+	var req = new window.XMLHttpRequest();
 	req.open("POST",
 		"https://www.googleapis.com/urlshortener/v1/url",
 		true
@@ -104,7 +104,7 @@ var isgd = function (url, callback) {
 	 * API
 	 * http://is.gd/apishorteningreference.php
 	 */
-	var req = new XMLHttpRequest();
+	var req = new window.XMLHttpRequest();
 	var querystring = "format=simple&url="+encodeURIComponent(url);
 	req.open("GET",
 		"http://is.gd/create.php?" + querystring,

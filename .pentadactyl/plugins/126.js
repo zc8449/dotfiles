@@ -22,7 +22,7 @@ group.commands.add(['net[ease]'],
                 }
             ]
         };
-        xhr = new XMLHttpRequest();
+        xhr = new window.XMLHttpRequest();
         xhr.open('POST', 'http://126.am/short.action');
         xhr.setRequestHeader('Content-Type',
             'application/x-www-form-urlencoded');

@@ -330,7 +330,7 @@ libly.$U = {//{{{
      *  $U.runnable(function(resume) {
      *      // execute asynchronous function.
      *      // goto next yield;
-     *      var val = yield setTimeout(function() { resume('value!'), 1000) });
+     *      var val = yield window.setTimeout(function() { resume('value!'), 1000) });
      *      alert(val);  // value!
      *      yield;
      *  });
@@ -451,7 +451,7 @@ libly.$U = {//{{{
     },
     xmlSerialize: function(xml) {
         try {
-            return (new XMLSerializer()).serializeToString(xml)
+            return (new window.XMLSerializer()).serializeToString(xml)
                                         .replace(/<!--(?:[^-]|-(?!->))*-->/g, '')
                                         .replace(/<\s*\/?\s*\w+/g, function(all) all.toLowerCase());
         } catch (e) { return '' }
@@ -528,7 +528,7 @@ libly.Request.prototype = {
         if (!(this.observers[name] instanceof Array)) return false;
         this.observers[name].forEach(function(event) {
             if (asynchronous) {
-                setTimeout(event, 10, args);
+                window.setTimeout(event, 10, args);
             } else {
                 event(args);
             }
@@ -542,7 +542,7 @@ libly.Request.prototype = {
             libly.Request.requestCount++;
 
             this.method = method;
-            this.transport = new XMLHttpRequest();
+            this.transport = new window.XMLHttpRequest();
             this.transport.open(method, this.url, this.options.asynchronous, this.options.username, this.options.password);
 
             var stateChangeException;
