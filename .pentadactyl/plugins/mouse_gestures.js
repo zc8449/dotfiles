@@ -11,11 +11,6 @@ var MouseGestures = function() {
 
   const Ci = Components.interfaces;
 
-  if (window._MouseGestures) {
-    window._MouseGestures.registerEvents('remove');
-    delete window._MouseGestures;
-  }
-
   var Class = function() function() {this.initialize.apply(this, arguments);};
   var MouseGestures = new Class();
 
@@ -43,15 +38,15 @@ var MouseGestures = function() {
       for (let [prop, val] in Iterator(obj)) {
         switch ( prop ) {
           case "_enableRocker" :
-            gBrowser.mPanelContainer.removeEventListener("draggesture", this, true);
+            window.gBrowser.mPanelContainer.removeEventListener("draggesture", this, true);
             if (val)
-              gBrowser.mPanelContainer.addEventListener("draggesture", this, true);
+              window.gBrowser.mPanelContainer.addEventListener("draggesture", this, true);
             break;
 
           case "_enableWheel" :
-            gBrowser.mPanelContainer.removeEventListener("DOMMouseScroll", this, false);
+            window.gBrowser.mPanelContainer.removeEventListener("DOMMouseScroll", this, false);
             if (val)
-              gBrowser.mPanelContainer.addEventListener("DOMMouseScroll", this, false);
+              window.gBrowser.mPanelContainer.addEventListener("DOMMouseScroll", this, false);
             break;
 
           default: 
@@ -87,7 +82,7 @@ var MouseGestures = function() {
     registerEvents: function(action) {
       var self = this;
       this.captureEvents.forEach(
-        function(type) { gBrowser.mPanelContainer[action + 'EventListener'](type, self, type == 'contextmenu' || type == 'draggesture');
+        function(type) { window.gBrowser.mPanelContainer[action + 'EventListener'](type, self, type == 'contextmenu' || type == 'draggesture');
       });
     },
     set status(msg) {
@@ -198,7 +193,7 @@ var MouseGestures = function() {
       this.timerGesture(this._cancel);
       var x = event.screenX, y = event.screenY;
       var distX = Math.abs(x-this._x), distY = Math.abs(y-this._y);
-      var threshold = 15/ (gBrowser.selectedBrowser.markupDocumentViewer.fullZoom || 1.0);
+      var threshold = 15 / (window.gBrowser.selectedBrowser.markupDocumentViewer.fullZoom || 1.0);
       if (distX < threshold && distY < threshold) return;
       var dir = distX > distY ? (x<this._x ? 'L' : 'R') : (y<this._y ? 'U': 'D');
       if (dir != this._gesture.slice(-1)) {
@@ -208,8 +203,8 @@ var MouseGestures = function() {
       this._x = x; this._y = y;
     },
     timerGesture: function(isClear) {
-      if (this._timer)  clearTimeout(this._timer);
-        this._timer = setTimeout( !isClear ? function(self) self.stopGesture({}, true) : function(self) self._timer = self.status = '', 1000, this);
+      if (this._timer)  window.clearTimeout(this._timer);
+        this._timer = window.setTimeout( !isClear ? function(self) self.stopGesture({}, true) : function(self) self._timer = self.status = '', 1000, this);
     },
     stopGesture: function(event, cancel) {
       this._cancel = cancel || false;
@@ -247,8 +242,8 @@ if (!userContext.MGLIST) {
     ['UDR', 'Add Bookmark', ':dialog addbookmark'],
     ['L>R', 'Forward', '#Browser:Forward'],
     ['L<R', 'Back', '#Browser:Back'],
-    ['W-' , 'Select Previous Tab', function() gBrowser.tabContainer.advanceSelectedTab(-1, true) ],
-    ['W+' , 'Select Next Tab', function() gBrowser.tabContainer.advanceSelectedTab(+1, true) ],
+    ['W-' , 'Select Previous Tab', function() window.gBrowser.tabContainer.advanceSelectedTab(-1, true) ],
+    ['W+' , 'Select Next Tab', function() window.gBrowser.tabContainer.advanceSelectedTab(+1, true) ],
   ];
 }
 
@@ -445,7 +440,10 @@ function list() {
 }
 
 var MG = new MouseGestures();
-window._MouseGestures = MG;
+
+function onUnload() {
+    MG.registerEvents("remove")
+}
 
 var INFO =
 <plugin name="mouse_gestures.js" version="0.10.1"

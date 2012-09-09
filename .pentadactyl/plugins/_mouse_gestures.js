@@ -2,7 +2,7 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Sat 09 Jul 2011 02:10:43 PM CST
-// @Last Change: Sat 09 Jul 2011 07:13:49 PM CST
+// @Last Change: Sun 09 Sep 2012 03:41:12 PM CST
 // @Revision:    48
 // @Description:
 // @Usage:
@@ -19,14 +19,15 @@ userContext.MGLIST = [
 	['LR'  , '撤销关闭标签页'           , '#History:UndoCloseTab'],
 	['U'   , '选择上一个标签页'         , 'gT', true],
 	['D'   , '选择下一个标签页'         , 'gt', true],
+	['UD'  , '刷新当前标签页'           , 'r', true],
 	['DR'  , '关闭当前标签页'           , 'd', true],
-	['LU'  , '到页面最底部'             , function() goDoCommand('cmd_scrollTop')],
-	['LD'  , '到页面最底部'             , function() goDoCommand('cmd_scrollBottom')],
+	['LU'  , '到页面最底部'             , function() window.goDoCommand('cmd_scrollTop')],
+	['LD'  , '到页面最底部'             , function() window.goDoCommand('cmd_scrollBottom')],
 	['UDR' , '添加当前页到书签'         , ':dialog addbookmark'],
 	['L>R' , '前进'                     , '#Browser:Forward'],
 	['L<R' , '后退'                     , '#Browser:Back'],
-	['W-'  , '选择上一个标签页'         , function() gBrowser.tabContainer.advanceSelectedTab(-1, true)],
-	['W+'  , '选择下一个标签页'         , function() gBrowser.tabContainer.advanceSelectedTab(+1, true)],
+	['W-'  , '选择上一个标签页'         , function() window.gBrowser.tabContainer.advanceSelectedTab(-1, true)],
+	['W+'  , '选择下一个标签页'         , function() window.gBrowser.tabContainer.advanceSelectedTab(+1, true)],
 ];
 
 /**
