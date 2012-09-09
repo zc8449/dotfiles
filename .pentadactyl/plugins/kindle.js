@@ -2,7 +2,7 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Fri 25 Mar 2011 10:52:58 PM CST
-// @Last Change: Thu 29 Mar 2012 11:35:06 PM CST
+// @Last Change: Sun 09 Sep 2012 12:56:59 PM CST
 // @Revision:    555
 // @Description:
 // @Usage:
@@ -255,7 +255,7 @@ var Kindle = function () {
     that.showing = {};
     that.kindle_wrapper = {};
     var getCurrentPanelID = function () {
-        return gBrowser.mCurrentTab.linkedPanel;
+        return window.gBrowser.mCurrentTab.linkedPanel;
     };
     var _tidy = function (elem) {
         var path = {
@@ -537,10 +537,10 @@ group.options.add(['kindle-theme', 'kint'],
     }
 );
 
-gBrowser.tabContainer.addEventListener('TabClose', K.free, false);
+window.gBrowser.tabContainer.addEventListener('TabClose', K.free, false);
 
 function onUnload() { // :rehash, exit firefox/current window, disable pentadactyl extension
-    gBrowser.tabContainer.removeEventListener('TabClose', K.free, false);
+    window.gBrowser.tabContainer.removeEventListener('TabClose', K.free, false);
 }
 // iframe, frameset, use importNode, 然后将显示放到最上层浏览器窗口 iframe.parent
 // //*[name()!='A' and name()!='SPAN' and name()!='INPUT' and name()!='EM']
@@ -556,4 +556,5 @@ function onUnload() { // :rehash, exit firefox/current window, disable pentadact
 // <div id="layer" style="width:100%;height:100%;z-index:1;"></div>
 // <div id="content" style="z-index:2;"></div>
 // zoom text only (not) ，自动把页面放大，不只是放大字体。
+// evernote clearly, ireader, readability
 // vim: set et ts=4 sw=4:

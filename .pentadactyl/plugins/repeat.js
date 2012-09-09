@@ -2,7 +2,7 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Sat 06 Aug 2011 03:31:12 PM CST
-// @Last Change: Thu 09 Feb 2012 08:32:56 PM CST
+// @Last Change: Sun 09 Sep 2012 12:54:58 PM CST
 // @Revision:    423
 // @Description:
 // @Usage:
@@ -12,14 +12,14 @@
 let repeat = {
 	store: storage.newMap("repeat_js", {store: false}),
 	linkedPanel: function(/*aTab*/) {
-		let tab = arguments[0] || gBrowser.mCurrentTab;
+		let tab = arguments[0] || window.gBrowser.mCurrentTab;
 		return tab.linkedPanel;
 	},
 	linkedTab: function(/*alinkedPanel*/) {
-		let tab = gBrowser.mCurrentTab;
+		let tab = window.gBrowser.mCurrentTab;
 		if (typeof arguments[0] !== "undefined") {
 			let linkedPanel = arguments[0];
-			Array.forEach(gBrowser.tabs, function (aTab) {
+			Array.forEach(window.gBrowser.tabs, function (aTab) {
 				if (aTab.linkedPanel == linkedPanel)
 					tab = aTab;
 			})
@@ -28,21 +28,21 @@ let repeat = {
 	},
 
 	linkedBrowser: function(/*aTab*/) {
-		return (arguments[0] && arguments[0].linkedBrowser) || gBrowser.mCurrentBrowser;
+		return (arguments[0] && arguments[0].linkedBrowser) || window.gBrowser.mCurrentBrowser;
 	},
 
 	info: function(/*aTab*/) {
-		let aTab = arguments[0] || gBrowser.mCurrentTab;
-		return "标签: " + (gBrowser.tabContainer.getIndexOfItem(aTab) + 1) + " - " + aTab.label;
+		let aTab = arguments[0] || window.gBrowser.mCurrentTab;
+		return "标签: " + (window.gBrowser.tabContainer.getIndexOfItem(aTab) + 1) + " - " + aTab.label;
 	},
 
 	clearRepeating: function(/*aBuffer*/) {
-		let tab = gBrowser.mCurrentTab;
+		let tab = window.gBrowser.mCurrentTab;
 		let buffer = arguments[0] || false;
 		if (buffer) {
 			let matches = buffer.match(/^(\d+):?/);
 			if (matches)
-				tab = gBrowser.tabs[parseInt(matches[1], 10) -1];
+				tab = window.gBrowser.tabs[parseInt(matches[1], 10) -1];
 		} else {
 			if (repeat.store.keys().length == 1)
 				tab = repeat.linkedTab(repeat.store.keys()[0]);
@@ -157,7 +157,7 @@ let repeat = {
 
 	generate: function(context, args) {
 		if (repeat.store.keys().length) {
-			let activeTabs = Array.filter(gBrowser.tabs, function(aTab) {
+			let activeTabs = Array.filter(window.gBrowser.tabs, function(aTab) {
 					let panel = repeat.store.get(aTab.linkedPanel);
 					if (panel)
 						return true;
@@ -169,10 +169,10 @@ let repeat = {
 	listRepeatings: function() { // TODO: command
 		if (repeat.store.keys().length) {
 			let l = <></>;
-			Array.forEach(gBrowser.tabs, function(aTab) {
+			Array.forEach(window.gBrowser.tabs, function(aTab) {
 					let panel = repeat.store.get(aTab.linkedPanel);
 					if (panel) {
-						let _l = <><tr style="text-align:center;"><td>{gBrowser.tabContainer.getIndexOfItem(aTab)+1}</td><td style="vertical-align:middle;"><img style="vertical-align:middle;margin-right:5px;" src={aTab.image || DEFAULT_FAVICON}/>{aTab.label}</td><td>{repeat.humanTime(panel[1])}</td></tr></>;
+						let _l = <><tr style="text-align:center;"><td>{window.gBrowser.tabContainer.getIndexOfItem(aTab)+1}</td><td style="vertical-align:middle;"><img style="vertical-align:middle;margin-right:5px;" src={aTab.image || DEFAULT_FAVICON}/>{aTab.label}</td><td>{repeat.humanTime(panel[1])}</td></tr></>;
 						l+=_l;
 					}
 			});

@@ -2,7 +2,7 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Wed 28 Mar 2012 12:25:52 AM CST
-// @Last Change: Fri 20 Jul 2012 11:09:03 PM CST
+// @Last Change: Sun 09 Sep 2012 03:44:09 PM CST
 // @Revision:    121
 // @Description:
 // @Usage:
@@ -10,10 +10,10 @@
 // @CHANGES:
 
 if (window.timertimer)
-    clearInterval(window.timertimer);
+    window.clearInterval(window.timertimer);
 
 let exec = function() {
-    let doc = gBrowser.mCurrentBrowser.contentDocument;
+    let doc = window.gBrowser.mCurrentBrowser.contentDocument;
     let loc = doc.location;
     let lastModified = doc.lastModified;
     let timestamp = new Date(lastModified).getTime();
@@ -46,7 +46,12 @@ let check = function(collection, attr) {
     return function(doc, timestamp) {
         return Array.some(doc[collection], function(item) {
             let src = item[attr];
-            if (src.length == 0)
+            // if (!src && collection == 'styleSheets') { // @import statement
+                // // @FIXME: (NS_ERROR_MALFORMED_URI) [nsIIOService.newURI]
+                // let checkCssRules = check('cssRules', 'href');
+                // return checkCssRules(item, timestamp);
+            // }
+            if (!src || src.length == 0)
                 return false;
             let uri = util.newURI(src);
             if (uri.scheme === 'file') {
@@ -66,10 +71,10 @@ let check = function(collection, attr) {
 let checkScripts = check('scripts', 'src');
 let checkStyleSheets = check('styleSheets', 'href');
 
-window.timertimer = setInterval(exec, 500);
+window.timertimer = window.setInterval(exec, 500);
 
 function onUnload() {
-    clearInterval(window.timertimer);
+    window.clearInterval(window.timertimer);
 }
 
 // 添加右键菜单，有指定动作
