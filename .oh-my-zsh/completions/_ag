@@ -8,6 +8,8 @@ _arguments -C \
 	'(--break --nobreak --heading --noheading --group --nogroup)'{--break,--nobreak,--heading,--noheading,--group,--nogroup}'[Print  a  newline between matches in different files.  Enabled by default.]' \
 	'(--color --noclor)'{--color,--nocolor}'[Print color codes in results. Enabled by default.]' \
 	--column'[Print column numbers in results.]' \
+	--pager'[Use a pager such as less.]':commands:_command_names -e \
+	--nopager'[Override pager option.]' \
 	'(-C --context)'{-C,--context}'[Print  lines  before  and  after  matches.  Defaults to 2.]':LINES: \
 	'(-D --debug)'{-D,--debug}'[Output ridiculous amounts of debugging info. Probably not useful.]' \
 	--depth'[Search up to NUM directories deep. Default is 25.]':NUM:'(1 2 3 4 5 6 7 8 9 10)' \
