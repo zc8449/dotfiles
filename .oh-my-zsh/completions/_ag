@@ -17,7 +17,7 @@ _arguments -C \
 	-g'[PATTERN: Print filenames matching PATTERN.]' \
 	'(-G --file-search-regex)'{-G,--file-search-regex}'[Only  search  filenames  matching PATTERN.]':PATTERN: \
 	--hidden'[Search hidden files. This option obeys ignore files.]' \
-	--ignore'[PATTERN: Ignore files/directories matching this pattern. Literal file and directory names are also allowed.]' \
+	--ignore'[PATTERN: Ignore files/directories matching this pattern. Literal file and directory names are also allowed.]':PATH:_files \
 	'(-i --ignore-case)'{-i,--ignore-case}'[Match case insensitively]' \
 	'(-l --files-with-matches)'{-l,--files-with-matches}'[Only print filenames containing matches, not matching lines.]' \
 	'(-L --files-without-matches)'{-L,--files-without-matches}'[Only print filenames that don´t contain matches.]' \
