@@ -2,7 +2,7 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Sun 26 Feb 2012 04:22:37 AM CST
-// @Last Change: Fri 23 Nov 2012 07:20:10 PM CST
+// @Last Change: Fri 23 Nov 2012 08:07:24 PM CST
 // @Revision:    112
 // @Description:
 // @Usage:       set hintmatching=custom " pinyin
@@ -67,3 +67,21 @@ try {
         }
     );
 }
+
+var INFO =
+<plugin name="chinese-hints" version="0.2.0"
+	href="https://github.com/grassofhust/dotfiles/blob/master/.pentadactyl/plugins/chinese-hints.js"
+	summary=""
+	xmlns={NS}>
+	<info lang="en-US" summary="Hint matching algorithm for Chinese"/>
+	<info lang="zh-CN" summary="使用拼音/五笔首字母搜索链接"/>
+	<author email="frederick.zou@gmail.com">zyang</author>
+	<license href="http://opensource.org/licenses/mit-license.php">MIT</license>
+	<project name="Pentadactyl" min-version="1.0"/>
+
+	<p lang="en-US">See the link below for more details:</p>
+	<p lang="zh-CN">使用方法请查看下面的链接：</p>
+
+    <p><link topic="https://github.com/grassofhust/dotfiles/blob/master/.pentadactyl/plugins/chinese-hints.js.README.rst">chinese-hints.js.README.rst</link></p>
+
+</plugin>;
