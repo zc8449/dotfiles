@@ -6,7 +6,7 @@
 安装
 ====
 
-将脚本 `<chinese-hints.js https://github.com/grassofhust/dotfiles/blob/master/.pentadactyl/plugins/chinese-hints.js>`_ 复制到 pentadactyl 的个人配置目录下的 ``plugins`` 目录。
+将脚本 ``chinese-hints.js`` `<https://github.com/grassofhust/dotfiles/blob/master/.pentadactyl/plugins/chinese-hints.js>`_ 复制到 pentadactyl 的个人配置目录下的 ``plugins`` 目录。
 
 设置
 ======
