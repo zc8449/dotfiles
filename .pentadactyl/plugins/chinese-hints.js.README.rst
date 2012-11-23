@@ -1,12 +1,14 @@
 拼音/五笔首字母搜索链接
 ========================
 
-让 pentadactyl 支持按拼音/五笔首字母搜索链接，对多音字有部分支持，但不完美。
+让 pentadactyl/vimperator 支持按拼音/五笔首字母搜索链接，对多音字有部分支持，但不完美。
 
 安装
 ====
 
 将脚本 ``chinese-hints.js`` `<https://github.com/grassofhust/dotfiles/blob/master/.pentadactyl/plugins/chinese-hints.js>`_ 复制到 pentadactyl 的个人配置目录下的 ``plugins`` 目录。
+
+注： **vimperator** 应该是在 **plugin** 目录中。
 
 设置
 ======
