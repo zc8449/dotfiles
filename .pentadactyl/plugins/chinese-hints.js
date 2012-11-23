@@ -2,7 +2,7 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Sun 26 Feb 2012 04:22:37 AM CST
-// @Last Change: Fri 23 Nov 2012 08:07:24 PM CST
+// @Last Change: Fri 23 Nov 2012 09:25:41 PM CST
 // @Revision:    112
 // @Description:
 // @Usage:       set hintmatching=custom " pinyin
@@ -23,7 +23,7 @@ let wubi = [
 
 let data = {pinyin: pinyin, wubi: wubi, start: 0x4e00, end: 0x9fa5};
 
-function trans(linkText, token) {
+function cmp(linkText, token) {
     if (linkText.indexOf(token) + 1)
         return true;
     let type = options["chinesehints"];
@@ -44,7 +44,7 @@ function matcher(hintString) {
     let tokens = tokenize(/\s+/, hintString);
     return function (linkText) {
         linkText = linkText.toLowerCase();
-        return tokens.every(function (token) trans(linkText, token));
+        return tokens.every(function (token) cmp(linkText, token));
     };
 }
 
