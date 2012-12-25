@@ -2,14 +2,13 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Sun 23 Oct 2011 01:04:54 PM CST
-// @Last Change: Tue 25 Dec 2012 03:21:08 PM CST
+// @Last Change: Mon 16 Apr 2012 12:09:35 AM CST
 // @Revision:    95
 // @Description:
 // @Usage:
 // @TODO:
 // @CHANGES:
 // @Readme:     recommend settings: set showtabline=always
-"use strict";
 
 let TOS = {
 	init: function() {
@@ -19,10 +18,9 @@ let TOS = {
 		TOS._tabsToolbar_next = TOS._tabsToolbar.nextSibling;
 		TOS._widget = document.getElementById('dactyl-statusline-field-tos');
 		if (!TOS._widget) {
-            TOS._widget = DOM.fromJSON(["toolbox", {"xmlns": XUL, "id":
-                        "dactyl-statusline-field-tos", "align": "stretch"}],
-                document);
-            TOS._widget.setAttribute("highlight", "TOS");
+			TOS._widget = util.xmlToDom(
+				<toolbox xmlns={XUL} highlight="TOS" id="dactyl-statusline-field-tos" align="stretch"/>,
+				document);
 		}
 		statusline.widgets.url.parentNode.insertBefore(TOS._widget, statusline.widgets.url.nextSibling);
 		commandline.widgets.addElement({
@@ -46,13 +44,13 @@ let TOS = {
 };
 TOS.init();
 
-highlight.loadCSS(
-    "[dactyl|highlight~=\"StatusCmdLine\"] {-moz-box-align:center;}\n" +
-    "[dactyl|highlight~=\"StatusCmdLine\"] #TabsToolbar {background-color:transparent !important;background-image:none !important;-moz-appearance:none !important;}\n" +
-    "[dactyl|highlight~=\"StatusLineBroken\"] [dactyl|highlight*=\"Status\"] {background-color:transparent;color:#313633;}\n" +
-    "[dactyl|highlight~=\"StatusLineExtended\"] [dactyl|highlight*=\"Status\"] {background-color:transparent;color:#313633;}\n" +
-    "[dactyl|highlight~=\"StatusLineSecure\"] [dactyl|highlight*=\"Status\"] {background-color:transparent;color:#313633;}"
-, true);
+highlight.loadCSS(<![CDATA[
+			StatusCmdLine {-moz-box-align:center;}
+			StatusCmdLine>#TabsToolbar {background-color:transparent !important;background-image:none !important;-moz-appearance:none !important;}
+			StatusLineBroken [dactyl|highlight*="Status"] {background-color:transparent;color:#313633;}
+			StatusLineExtended [dactyl|highlight*="Status"] {background-color:transparent;color:#313633;}
+			StatusLineSecure [dactyl|highlight*="Status"] {background-color:transparent;color:#313633;}
+]]>, true);
 
 // Options
 group.options.add(["tabs-on-statusline", "tos"],
