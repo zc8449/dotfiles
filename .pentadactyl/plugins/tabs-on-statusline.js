@@ -2,7 +2,7 @@
 // @Author:      eric.zou (frederick.zou@gmail.com)
 // @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 // @Created:     Sun 23 Oct 2011 01:04:54 PM CST
-// @Last Change: Tue 25 Dec 2012 03:21:08 PM CST
+// @Last Change: Sat 12 Jan 2013 06:15:39 PM CST
 // @Revision:    95
 // @Description:
 // @Usage:
@@ -20,9 +20,9 @@ let TOS = {
 		TOS._widget = document.getElementById('dactyl-statusline-field-tos');
 		if (!TOS._widget) {
             TOS._widget = DOM.fromJSON(["toolbox", {"xmlns": XUL, "id":
-                        "dactyl-statusline-field-tos", "align": "stretch"}],
-                document);
-            TOS._widget.setAttribute("highlight", "TOS");
+                        "dactyl-statusline-field-tos", "align": "stretch",
+                        "dactyl:highlight": "TOS"
+                }], document);
 		}
 		statusline.widgets.url.parentNode.insertBefore(TOS._widget, statusline.widgets.url.nextSibling);
 		commandline.widgets.addElement({
